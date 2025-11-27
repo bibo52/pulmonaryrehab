@@ -109,13 +109,12 @@ function NumberInput({
   unit?: string
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <label className="font-medium">{label}</label>
-      <div className="flex items-center gap-2">
+    <div>
+      <label className="block text-sm font-semibold text-[var(--forest)] mb-2">{label}</label>
+      <div className="number-stepper">
         <button
           type="button"
           onClick={() => onChange(Math.max(min, (value ?? min) - 1))}
-          className="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-lg text-2xl font-bold"
         >
           −
         </button>
@@ -123,18 +122,16 @@ function NumberInput({
           type="number"
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value ? parseInt(e.target.value) : null)}
-          className="w-24 text-center"
           min={min}
           max={max}
         />
         <button
           type="button"
           onClick={() => onChange(Math.min(max, (value ?? min) + 1))}
-          className="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-lg text-2xl font-bold"
         >
           +
         </button>
-        {unit && <span className="text-[var(--muted)]">{unit}</span>}
+        {unit && <span className="text-[var(--muted)] font-medium">{unit}</span>}
       </div>
     </div>
   )
@@ -150,14 +147,16 @@ function CheckboxItem({
   onChange: (val: boolean) => void
 }) {
   return (
-    <label className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
+    <label className={`exercise-item flex items-center gap-4 cursor-pointer ${checked ? 'completed' : ''}`}>
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
       />
-      <span className={checked ? 'line-through text-[var(--muted)]' : ''}>{label}</span>
-      {checked && <span className="ml-auto text-2xl">✓</span>}
+      <span className={`flex-1 ${checked ? 'line-through text-[var(--muted)]' : 'text-[var(--forest)]'}`}>
+        {label}
+      </span>
+      {checked && <span className="text-xl text-[var(--sage)]">✓</span>}
     </label>
   )
 }
@@ -184,22 +183,22 @@ function StrengthExercise({
   weightOptions: string[]
 }) {
   return (
-    <div className={`p-4 rounded-xl ${done ? 'bg-[var(--success-light)]' : 'bg-gray-50'}`}>
-      <label className="flex items-center gap-4 cursor-pointer mb-3">
+    <div className={`exercise-item ${done ? 'completed' : ''}`}>
+      <label className="flex items-center gap-4 cursor-pointer">
         <input
           type="checkbox"
           checked={done}
           onChange={(e) => onDoneChange(e.target.checked)}
         />
-        <span className={`font-medium ${done ? 'line-through text-[var(--muted)]' : ''}`}>
+        <span className={`flex-1 font-medium ${done ? 'line-through text-[var(--muted)]' : 'text-[var(--forest)]'}`}>
           {name}
         </span>
-        {done && <span className="ml-auto text-xl">✓</span>}
+        {done && <span className="text-xl text-[var(--sage)]">✓</span>}
       </label>
       {done && (
-        <div className="grid grid-cols-2 gap-3 mt-3 pl-10">
+        <div className="grid grid-cols-2 gap-3 mt-4 ml-10">
           <div>
-            <label className="text-sm text-[var(--muted)]">{weightLabel}</label>
+            <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">{weightLabel}</label>
             <select
               value={weight}
               onChange={(e) => onWeightChange(e.target.value)}
@@ -212,7 +211,7 @@ function StrengthExercise({
             </select>
           </div>
           <div>
-            <label className="text-sm text-[var(--muted)]">Reps × Sets</label>
+            <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Reps × Sets</label>
             <input
               type="text"
               value={reps}
@@ -241,30 +240,41 @@ function BodyweightExercise({
   onRepsChange: (val: string) => void
 }) {
   return (
-    <div className={`p-4 rounded-xl ${done ? 'bg-[var(--success-light)]' : 'bg-gray-50'}`}>
-      <label className="flex items-center gap-4 cursor-pointer mb-3">
+    <div className={`exercise-item ${done ? 'completed' : ''}`}>
+      <label className="flex items-center gap-4 cursor-pointer">
         <input
           type="checkbox"
           checked={done}
           onChange={(e) => onDoneChange(e.target.checked)}
         />
-        <span className={`font-medium ${done ? 'line-through text-[var(--muted)]' : ''}`}>
+        <span className={`flex-1 font-medium ${done ? 'line-through text-[var(--muted)]' : 'text-[var(--forest)]'}`}>
           {name}
         </span>
-        {done && <span className="ml-auto text-xl">✓</span>}
+        {done && <span className="text-xl text-[var(--sage)]">✓</span>}
       </label>
       {done && (
-        <div className="pl-10">
-          <label className="text-sm text-[var(--muted)]">Reps × Sets</label>
+        <div className="mt-4 ml-10">
+          <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Reps × Sets</label>
           <input
             type="text"
             value={reps}
             onChange={(e) => onRepsChange(e.target.value)}
             placeholder="e.g., 10×2"
-            className="mt-1 max-w-xs"
+            className="mt-1 max-w-[200px]"
           />
         </div>
       )}
+    </div>
+  )
+}
+
+function SectionHeader({ icon, title }: { icon: string; title: string }) {
+  return (
+    <div className="section-header">
+      <div className="icon-wrap">
+        <span>{icon}</span>
+      </div>
+      <h2 className="text-xl">{title}</h2>
     </div>
   )
 }
@@ -326,295 +336,286 @@ function LogPageContent() {
   const displayDate = parseISO(dateParam)
 
   return (
-    <div className="min-h-screen p-6 max-w-3xl mx-auto pb-32">
+    <div className="min-h-screen pb-32">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <Link href="/dashboard" className="text-[var(--primary)] hover:underline mb-2 inline-block">
-            ← Back to Dashboard
+      <header className="sticky top-0 bg-[var(--background)] border-b border-[var(--border)] p-4 z-10">
+        <div className="max-w-2xl mx-auto flex items-center gap-4">
+          <Link
+            href="/dashboard"
+            className="flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--cream-dark)] hover:bg-[var(--mist)]"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
           </Link>
-          <h1 className="text-3xl font-bold">Daily Log</h1>
-          <p className="text-[var(--muted)] text-xl mt-1">
-            {format(displayDate, 'EEEE, MMMM d, yyyy')}
-          </p>
+          <div className="flex-1">
+            <h1 className="text-xl">{format(displayDate, 'EEEE')}</h1>
+            <p className="text-sm text-[var(--muted)]">{format(displayDate, 'MMMM d, yyyy')}</p>
+          </div>
         </div>
+      </header>
+
+      <div className="p-4 max-w-2xl mx-auto space-y-6">
+        {/* Pre-Exercise Section */}
+        <section className="card p-6 animate-fade-in">
+          <SectionHeader icon="📊" title="Pre-Exercise" />
+          <div className="grid grid-cols-2 gap-4">
+            <NumberInput
+              label="O2 Saturation"
+              value={log.restingO2Sat}
+              onChange={(v) => updateLog('restingO2Sat', v)}
+              min={70}
+              max={100}
+              unit="%"
+            />
+            <NumberInput
+              label="Heart Rate"
+              value={log.restingHr}
+              onChange={(v) => updateLog('restingHr', v)}
+              min={40}
+              max={150}
+              unit="bpm"
+            />
+            <NumberInput
+              label="Inogen Setting"
+              value={log.inogenSetting}
+              onChange={(v) => updateLog('inogenSetting', v)}
+              min={1}
+              max={6}
+            />
+            <NumberInput
+              label="Symptoms"
+              value={log.symptomsScore}
+              onChange={(v) => updateLog('symptomsScore', v)}
+              min={0}
+              max={10}
+              unit="/ 10"
+            />
+          </div>
+        </section>
+
+        {/* Warm-Up Section */}
+        <section className="card p-6 animate-fade-in delay-1">
+          <SectionHeader icon="🔥" title="Warm-Up" />
+          <div className="space-y-3">
+            <CheckboxItem
+              label="Seated Marching (2 min)"
+              checked={log.seatedMarching}
+              onChange={(v) => updateLog('seatedMarching', v)}
+            />
+            <CheckboxItem
+              label="Shoulder Rolls (20 reps)"
+              checked={log.shoulderRolls}
+              onChange={(v) => updateLog('shoulderRolls', v)}
+            />
+            <CheckboxItem
+              label="Diaphragmatic Breathing (2 min)"
+              checked={log.diaphragmaticBreathing}
+              onChange={(v) => updateLog('diaphragmaticBreathing', v)}
+            />
+            <CheckboxItem
+              label="Pursed-Lip Breathing (2 min)"
+              checked={log.pursedLipBreathingWarmup}
+              onChange={(v) => updateLog('pursedLipBreathingWarmup', v)}
+            />
+          </div>
+        </section>
+
+        {/* Strength Training Section */}
+        <section className="card p-6 animate-fade-in delay-2">
+          <SectionHeader icon="💪" title="Strength Training" />
+          <div className="space-y-4">
+            <StrengthExercise
+              name="Biceps Curls"
+              done={log.bicepCurlsDone}
+              onDoneChange={(v) => updateLog('bicepCurlsDone', v)}
+              weight={log.bicepCurlsWeight}
+              onWeightChange={(v) => updateLog('bicepCurlsWeight', v)}
+              reps={log.bicepCurlsReps}
+              onRepsChange={(v) => updateLog('bicepCurlsReps', v)}
+              weightOptions={['3 lb', '5 lb', '8 lb', '10 lb']}
+            />
+            <StrengthExercise
+              name="Triceps Extensions"
+              done={log.tricepExtDone}
+              onDoneChange={(v) => updateLog('tricepExtDone', v)}
+              weight={log.tricepExtWeight}
+              onWeightChange={(v) => updateLog('tricepExtWeight', v)}
+              reps={log.tricepExtReps}
+              onRepsChange={(v) => updateLog('tricepExtReps', v)}
+              weightOptions={['3 lb', '5 lb', '8 lb', '10 lb']}
+            />
+            <StrengthExercise
+              name="Shoulder Press"
+              done={log.shoulderPressDone}
+              onDoneChange={(v) => updateLog('shoulderPressDone', v)}
+              weight={log.shoulderPressWeight}
+              onWeightChange={(v) => updateLog('shoulderPressWeight', v)}
+              reps={log.shoulderPressReps}
+              onRepsChange={(v) => updateLog('shoulderPressReps', v)}
+              weightOptions={['3 lb', '5 lb', '8 lb', '10 lb']}
+            />
+            <StrengthExercise
+              name="Chest Press"
+              done={log.chestPressDone}
+              onDoneChange={(v) => updateLog('chestPressDone', v)}
+              weight={log.chestPressBand}
+              onWeightChange={(v) => updateLog('chestPressBand', v)}
+              reps={log.chestPressReps}
+              onRepsChange={(v) => updateLog('chestPressReps', v)}
+              weightLabel="Band"
+              weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
+            />
+            <StrengthExercise
+              name="Seated Rows"
+              done={log.seatedRowsDone}
+              onDoneChange={(v) => updateLog('seatedRowsDone', v)}
+              weight={log.seatedRowsBand}
+              onWeightChange={(v) => updateLog('seatedRowsBand', v)}
+              reps={log.seatedRowsReps}
+              onRepsChange={(v) => updateLog('seatedRowsReps', v)}
+              weightLabel="Band"
+              weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
+            />
+            <BodyweightExercise
+              name="Sit-to-Stands"
+              done={log.sitToStandsDone}
+              onDoneChange={(v) => updateLog('sitToStandsDone', v)}
+              reps={log.sitToStandsReps}
+              onRepsChange={(v) => updateLog('sitToStandsReps', v)}
+            />
+            <BodyweightExercise
+              name="Standing Leg Lifts"
+              done={log.legLiftsDone}
+              onDoneChange={(v) => updateLog('legLiftsDone', v)}
+              reps={log.legLiftsReps}
+              onRepsChange={(v) => updateLog('legLiftsReps', v)}
+            />
+            <BodyweightExercise
+              name="Mini-Squats"
+              done={log.miniSquatsDone}
+              onDoneChange={(v) => updateLog('miniSquatsDone', v)}
+              reps={log.miniSquatsReps}
+              onRepsChange={(v) => updateLog('miniSquatsReps', v)}
+            />
+          </div>
+        </section>
+
+        {/* Aerobic Section */}
+        <section className="card p-6 animate-fade-in delay-3">
+          <SectionHeader icon="🚣" title="Rowing Machine" />
+          <div className="grid grid-cols-2 gap-4">
+            <NumberInput
+              label="Duration"
+              value={log.rowingDuration}
+              onChange={(v) => updateLog('rowingDuration', v)}
+              min={0}
+              max={60}
+              unit="min"
+            />
+            <NumberInput
+              label="Avg O2 Sat"
+              value={log.rowingAvgO2}
+              onChange={(v) => updateLog('rowingAvgO2', v)}
+              min={70}
+              max={100}
+              unit="%"
+            />
+            <NumberInput
+              label="Lowest O2 Sat"
+              value={log.rowingLowO2}
+              onChange={(v) => updateLog('rowingLowO2', v)}
+              min={70}
+              max={100}
+              unit="%"
+            />
+            <NumberInput
+              label="Heart Rate"
+              value={log.rowingHr}
+              onChange={(v) => updateLog('rowingHr', v)}
+              min={40}
+              max={180}
+              unit="bpm"
+            />
+            <NumberInput
+              label="Inogen Setting"
+              value={log.rowingInogen}
+              onChange={(v) => updateLog('rowingInogen', v)}
+              min={1}
+              max={6}
+            />
+          </div>
+        </section>
+
+        {/* Cool Down Section */}
+        <section className="card p-6 animate-fade-in delay-4">
+          <SectionHeader icon="❄️" title="Cool Down" />
+          <div className="space-y-3">
+            <CheckboxItem
+              label="Light Rowing (1-2 min)"
+              checked={log.lightRowing}
+              onChange={(v) => updateLog('lightRowing', v)}
+            />
+            <CheckboxItem
+              label="Stretching (3 min)"
+              checked={log.stretching}
+              onChange={(v) => updateLog('stretching', v)}
+            />
+            <CheckboxItem
+              label="Pursed-Lip Breathing (2 min)"
+              checked={log.pursedLipBreathingCooldown}
+              onChange={(v) => updateLog('pursedLipBreathingCooldown', v)}
+            />
+          </div>
+        </section>
+
+        {/* Post-Exercise Section */}
+        <section className="card p-6 animate-fade-in">
+          <SectionHeader icon="📈" title="Post-Exercise" />
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <NumberInput
+              label="Recovery O2 Sat"
+              value={log.recoveryO2}
+              onChange={(v) => updateLog('recoveryO2', v)}
+              min={70}
+              max={100}
+              unit="%"
+            />
+            <NumberInput
+              label="Recovery HR"
+              value={log.recoveryHr}
+              onChange={(v) => updateLog('recoveryHr', v)}
+              min={40}
+              max={150}
+              unit="bpm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-[var(--forest)] mb-2">Notes</label>
+            <textarea
+              value={log.notes}
+              onChange={(e) => updateLog('notes', e.target.value)}
+              placeholder="How did you feel? Any symptoms..."
+              rows={3}
+              className="w-full"
+            />
+          </div>
+        </section>
       </div>
 
-      {/* Pre-Exercise Section */}
-      <section className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-6">
-        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
-          <span className="text-3xl">📊</span> Pre-Exercise
-        </h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <NumberInput
-            label="Resting O2 Saturation"
-            value={log.restingO2Sat}
-            onChange={(v) => updateLog('restingO2Sat', v)}
-            min={70}
-            max={100}
-            unit="%"
-          />
-          <NumberInput
-            label="Resting Heart Rate"
-            value={log.restingHr}
-            onChange={(v) => updateLog('restingHr', v)}
-            min={40}
-            max={150}
-            unit="bpm"
-          />
-          <NumberInput
-            label="Inogen Setting"
-            value={log.inogenSetting}
-            onChange={(v) => updateLog('inogenSetting', v)}
-            min={1}
-            max={6}
-          />
-          <NumberInput
-            label="Symptoms Score"
-            value={log.symptomsScore}
-            onChange={(v) => updateLog('symptomsScore', v)}
-            min={0}
-            max={10}
-            unit="/ 10"
-          />
-        </div>
-      </section>
-
-      {/* Warm-Up Section */}
-      <section className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-6">
-        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
-          <span className="text-3xl">🔥</span> Warm-Up (5-7 min)
-        </h2>
-        <div className="space-y-3">
-          <CheckboxItem
-            label="Seated Marching (2 min)"
-            checked={log.seatedMarching}
-            onChange={(v) => updateLog('seatedMarching', v)}
-          />
-          <CheckboxItem
-            label="Shoulder Rolls (20 reps)"
-            checked={log.shoulderRolls}
-            onChange={(v) => updateLog('shoulderRolls', v)}
-          />
-          <CheckboxItem
-            label="Diaphragmatic Breathing (2 min)"
-            checked={log.diaphragmaticBreathing}
-            onChange={(v) => updateLog('diaphragmaticBreathing', v)}
-          />
-          <CheckboxItem
-            label="Pursed-Lip Breathing (2 min)"
-            checked={log.pursedLipBreathingWarmup}
-            onChange={(v) => updateLog('pursedLipBreathingWarmup', v)}
-          />
-        </div>
-      </section>
-
-      {/* Strength Training Section */}
-      <section className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-6">
-        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
-          <span className="text-3xl">💪</span> Strength Training
-        </h2>
-        <div className="space-y-4">
-          <StrengthExercise
-            name="Biceps Curls (12-15 reps × 2-3 sets)"
-            done={log.bicepCurlsDone}
-            onDoneChange={(v) => updateLog('bicepCurlsDone', v)}
-            weight={log.bicepCurlsWeight}
-            onWeightChange={(v) => updateLog('bicepCurlsWeight', v)}
-            reps={log.bicepCurlsReps}
-            onRepsChange={(v) => updateLog('bicepCurlsReps', v)}
-            weightOptions={['3 lb', '5 lb', '8 lb', '10 lb']}
-          />
-          <StrengthExercise
-            name="Triceps Extensions (12-15 reps × 2-3 sets)"
-            done={log.tricepExtDone}
-            onDoneChange={(v) => updateLog('tricepExtDone', v)}
-            weight={log.tricepExtWeight}
-            onWeightChange={(v) => updateLog('tricepExtWeight', v)}
-            reps={log.tricepExtReps}
-            onRepsChange={(v) => updateLog('tricepExtReps', v)}
-            weightOptions={['3 lb', '5 lb', '8 lb', '10 lb']}
-          />
-          <StrengthExercise
-            name="Shoulder Press (10-12 reps × 2 sets)"
-            done={log.shoulderPressDone}
-            onDoneChange={(v) => updateLog('shoulderPressDone', v)}
-            weight={log.shoulderPressWeight}
-            onWeightChange={(v) => updateLog('shoulderPressWeight', v)}
-            reps={log.shoulderPressReps}
-            onRepsChange={(v) => updateLog('shoulderPressReps', v)}
-            weightOptions={['3 lb', '5 lb', '8 lb', '10 lb']}
-          />
-          <StrengthExercise
-            name="Chest Press (12-15 reps × 2 sets)"
-            done={log.chestPressDone}
-            onDoneChange={(v) => updateLog('chestPressDone', v)}
-            weight={log.chestPressBand}
-            onWeightChange={(v) => updateLog('chestPressBand', v)}
-            reps={log.chestPressReps}
-            onRepsChange={(v) => updateLog('chestPressReps', v)}
-            weightLabel="Band"
-            weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
-          />
-          <StrengthExercise
-            name="Seated Rows (12-15 reps × 2 sets)"
-            done={log.seatedRowsDone}
-            onDoneChange={(v) => updateLog('seatedRowsDone', v)}
-            weight={log.seatedRowsBand}
-            onWeightChange={(v) => updateLog('seatedRowsBand', v)}
-            reps={log.seatedRowsReps}
-            onRepsChange={(v) => updateLog('seatedRowsReps', v)}
-            weightLabel="Band"
-            weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
-          />
-          <BodyweightExercise
-            name="Sit-to-Stands (10-15 reps × 2 sets)"
-            done={log.sitToStandsDone}
-            onDoneChange={(v) => updateLog('sitToStandsDone', v)}
-            reps={log.sitToStandsReps}
-            onRepsChange={(v) => updateLog('sitToStandsReps', v)}
-          />
-          <BodyweightExercise
-            name="Standing Leg Lifts (10 reps each leg × 2)"
-            done={log.legLiftsDone}
-            onDoneChange={(v) => updateLog('legLiftsDone', v)}
-            reps={log.legLiftsReps}
-            onRepsChange={(v) => updateLog('legLiftsReps', v)}
-          />
-          <BodyweightExercise
-            name="Mini-Squats (10-12 reps × 2)"
-            done={log.miniSquatsDone}
-            onDoneChange={(v) => updateLog('miniSquatsDone', v)}
-            reps={log.miniSquatsReps}
-            onRepsChange={(v) => updateLog('miniSquatsReps', v)}
-          />
-        </div>
-      </section>
-
-      {/* Aerobic - Rowing Section */}
-      <section className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-6">
-        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
-          <span className="text-3xl">🚣</span> Aerobic: Rowing Machine
-        </h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <NumberInput
-            label="Duration"
-            value={log.rowingDuration}
-            onChange={(v) => updateLog('rowingDuration', v)}
-            min={0}
-            max={60}
-            unit="min"
-          />
-          <NumberInput
-            label="Average O2 Sat"
-            value={log.rowingAvgO2}
-            onChange={(v) => updateLog('rowingAvgO2', v)}
-            min={70}
-            max={100}
-            unit="%"
-          />
-          <NumberInput
-            label="Lowest O2 Sat"
-            value={log.rowingLowO2}
-            onChange={(v) => updateLog('rowingLowO2', v)}
-            min={70}
-            max={100}
-            unit="%"
-          />
-          <NumberInput
-            label="Heart Rate (avg)"
-            value={log.rowingHr}
-            onChange={(v) => updateLog('rowingHr', v)}
-            min={40}
-            max={180}
-            unit="bpm"
-          />
-          <NumberInput
-            label="Inogen Setting"
-            value={log.rowingInogen}
-            onChange={(v) => updateLog('rowingInogen', v)}
-            min={1}
-            max={6}
-          />
-        </div>
-      </section>
-
-      {/* Cool Down Section */}
-      <section className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-6">
-        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
-          <span className="text-3xl">❄️</span> Cool Down
-        </h2>
-        <div className="space-y-3">
-          <CheckboxItem
-            label="Light Rowing (1-2 min)"
-            checked={log.lightRowing}
-            onChange={(v) => updateLog('lightRowing', v)}
-          />
-          <CheckboxItem
-            label="Stretching (3 min)"
-            checked={log.stretching}
-            onChange={(v) => updateLog('stretching', v)}
-          />
-          <CheckboxItem
-            label="Pursed-Lip Breathing (2 min)"
-            checked={log.pursedLipBreathingCooldown}
-            onChange={(v) => updateLog('pursedLipBreathingCooldown', v)}
-          />
-        </div>
-      </section>
-
-      {/* Post-Exercise Section */}
-      <section className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-6">
-        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
-          <span className="text-3xl">📈</span> Post-Exercise
-        </h2>
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          <NumberInput
-            label="Recovery O2 Sat (after 3 min)"
-            value={log.recoveryO2}
-            onChange={(v) => updateLog('recoveryO2', v)}
-            min={70}
-            max={100}
-            unit="%"
-          />
-          <NumberInput
-            label="Recovery Heart Rate"
-            value={log.recoveryHr}
-            onChange={(v) => updateLog('recoveryHr', v)}
-            min={40}
-            max={150}
-            unit="bpm"
-          />
-        </div>
-        <div>
-          <label className="font-medium block mb-2">Notes / Symptoms</label>
-          <textarea
-            value={log.notes}
-            onChange={(e) => updateLog('notes', e.target.value)}
-            placeholder="How did you feel? Any symptoms or observations..."
-            rows={4}
-            className="w-full"
-          />
-        </div>
-      </section>
-
-      {/* Floating Save Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--border)] p-4 shadow-lg">
-        <div className="max-w-3xl mx-auto flex gap-4">
+      {/* Floating Save Bar */}
+      <div className="floating-bar">
+        <div className="max-w-2xl mx-auto flex gap-3">
           <button
             onClick={() => router.push('/dashboard')}
-            className="flex-1 bg-gray-100 hover:bg-gray-200 text-[var(--foreground)]"
+            className="flex-1 btn-secondary"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className={`flex-1 text-white font-semibold ${
-              saved
-                ? 'bg-[var(--success)]'
-                : 'bg-[var(--primary)] hover:bg-[var(--primary-hover)]'
-            } disabled:opacity-50`}
+            className={`flex-1 ${saved ? 'bg-[var(--success)] text-white' : 'btn-primary'} disabled:opacity-50`}
           >
             {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Log'}
           </button>
@@ -624,10 +625,16 @@ function LogPageContent() {
   )
 }
 
-
 export default function LogPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-xl">Loading...</p></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-breathe text-5xl mb-4">🫁</div>
+          <p className="text-[var(--muted)]">Loading...</p>
+        </div>
+      </div>
+    }>
       <LogPageContent />
     </Suspense>
   )

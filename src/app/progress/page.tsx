@@ -22,7 +22,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from 'recharts'
 
@@ -116,15 +115,14 @@ export default function ProgressPage() {
   const chartData = logs
     .filter((log) => log.restingO2Sat || log.recoveryO2)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(-30)
+    .slice(-14)
     .map((log) => ({
-      date: format(new Date(log.date), 'MMM d'),
+      date: format(new Date(log.date), 'M/d'),
       restingO2: log.restingO2Sat,
       recoveryO2: log.recoveryO2,
       restingHr: log.restingHr,
       recoveryHr: log.recoveryHr,
       rowing: log.rowingDuration,
-      symptoms: log.symptomsScore,
     }))
 
   const streak = calculateStreak(logs)
@@ -133,199 +131,265 @@ export default function ProgressPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-xl text-[var(--muted)]">Loading...</p>
+        <div className="text-center">
+          <div className="animate-breathe text-5xl mb-4">🫁</div>
+          <p className="text-[var(--muted)]">Loading progress...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen p-6 max-w-5xl mx-auto">
+    <div className="min-h-screen pb-8">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <Link href="/dashboard" className="text-[var(--primary)] hover:underline mb-2 inline-block">
-            ← Back to Dashboard
+      <header className="sticky top-0 bg-[var(--background)] border-b border-[var(--border)] p-4 z-10">
+        <div className="max-w-3xl mx-auto flex items-center gap-4">
+          <Link
+            href="/dashboard"
+            className="flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--cream-dark)] hover:bg-[var(--mist)]"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
           </Link>
-          <h1 className="text-3xl font-bold">Progress</h1>
+          <h1 className="text-2xl">Your Progress</h1>
         </div>
-      </div>
+      </header>
 
-      {/* Stats Cards */}
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] text-center">
-          <div className="text-5xl mb-2">🔥</div>
-          <div className="text-4xl font-bold text-[var(--primary)]">{streak}</div>
-          <div className="text-[var(--muted)]">Day Streak</div>
-        </div>
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] text-center">
-          <div className="text-5xl mb-2">✅</div>
-          <div className="text-4xl font-bold text-[var(--success)]">{totalCompleted}</div>
-          <div className="text-[var(--muted)]">Workouts Completed</div>
-        </div>
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] text-center">
-          <div className="text-5xl mb-2">📊</div>
-          <div className="text-4xl font-bold">{logs.length}</div>
-          <div className="text-[var(--muted)]">Days Logged</div>
-        </div>
-      </div>
-
-      {/* Calendar */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-8">
-        <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className="p-2 hover:bg-gray-100 rounded-lg text-xl"
-          >
-            ←
-          </button>
-          <h2 className="text-2xl font-semibold">
-            {format(currentMonth, 'MMMM yyyy')}
-          </h2>
-          <button
-            onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className="p-2 hover:bg-gray-100 rounded-lg text-xl"
-          >
-            →
-          </button>
+      <div className="p-4 max-w-3xl mx-auto space-y-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-3 gap-3 animate-fade-in">
+          <div className="stat-card">
+            <span className="stat-icon">🔥</span>
+            <div className="stat-value" style={{ color: 'var(--terracotta)' }}>{streak}</div>
+            <div className="stat-label">Day Streak</div>
+          </div>
+          <div className="stat-card">
+            <span className="stat-icon">✓</span>
+            <div className="stat-value" style={{ color: 'var(--sage)' }}>{totalCompleted}</div>
+            <div className="stat-label">Completed</div>
+          </div>
+          <div className="stat-card">
+            <span className="stat-icon">📅</span>
+            <div className="stat-value">{logs.length}</div>
+            <div className="stat-label">Days Logged</div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-2 mb-2">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-            <div key={day} className="text-center text-sm font-medium text-[var(--muted)] py-2">
-              {day}
+        {/* Calendar */}
+        <div className="card p-6 animate-fade-in delay-1">
+          <div className="flex items-center justify-between mb-6">
+            <button
+              onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+              className="w-10 h-10 rounded-xl bg-[var(--cream-dark)] hover:bg-[var(--mist)] flex items-center justify-center"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h2 className="text-xl">
+              {format(currentMonth, 'MMMM yyyy')}
+            </h2>
+            <button
+              onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+              className="w-10 h-10 rounded-xl bg-[var(--cream-dark)] hover:bg-[var(--mist)] flex items-center justify-center"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+              <div key={i} className="text-center text-xs font-semibold text-[var(--muted)] py-2">
+                {day}
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7 gap-1">
+            {calendarDays.map((day) => {
+              const dayLog = logs.find((log) => isSameDay(new Date(log.date), day))
+              const completed = dayLog ? isLogComplete(dayLog) : false
+              const inMonth = isSameMonth(day, currentMonth)
+              const isTodayDate = isToday(day)
+
+              return (
+                <Link
+                  key={day.toISOString()}
+                  href={`/log?date=${format(day, 'yyyy-MM-dd')}`}
+                  className={`
+                    calendar-day
+                    ${!inMonth ? 'opacity-30' : ''}
+                    ${isTodayDate ? 'today' : ''}
+                    ${completed ? 'completed' : ''}
+                  `}
+                >
+                  <span className={`text-sm font-medium ${isTodayDate ? 'text-[var(--sage)]' : ''}`}>
+                    {format(day, 'd')}
+                  </span>
+                  {completed && <span className="text-xs text-[var(--sage)]">✓</span>}
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* O2 Saturation Chart */}
+        {chartData.length > 0 && (
+          <div className="card p-6 animate-fade-in delay-2">
+            <h2 className="text-xl mb-6">O2 Saturation</h2>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 12, fill: 'var(--muted)' }}
+                  axisLine={{ stroke: 'var(--border)' }}
+                />
+                <YAxis
+                  domain={[85, 100]}
+                  tick={{ fontSize: 12, fill: 'var(--muted)' }}
+                  axisLine={{ stroke: 'var(--border)' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--white)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="restingO2"
+                  name="Resting"
+                  stroke="var(--sage)"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: 'var(--sage)' }}
+                  connectNulls
+                />
+                <Line
+                  type="monotone"
+                  dataKey="recoveryO2"
+                  name="Recovery"
+                  stroke="var(--terracotta)"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: 'var(--terracotta)' }}
+                  connectNulls
+                />
+              </LineChart>
+            </ResponsiveContainer>
+            <div className="flex justify-center gap-6 mt-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[var(--sage)]" />
+                <span className="text-sm text-[var(--muted)]">Resting</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[var(--terracotta)]" />
+                <span className="text-sm text-[var(--muted)]">Recovery</span>
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
-        <div className="grid grid-cols-7 gap-2">
-          {calendarDays.map((day) => {
-            const dayLog = logs.find((log) => isSameDay(new Date(log.date), day))
-            const completed = dayLog ? isLogComplete(dayLog) : false
-            const inMonth = isSameMonth(day, currentMonth)
-            const isTodayDate = isToday(day)
+        {/* Heart Rate Chart */}
+        {chartData.length > 0 && (
+          <div className="card p-6 animate-fade-in delay-3">
+            <h2 className="text-xl mb-6">Heart Rate</h2>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 12, fill: 'var(--muted)' }}
+                  axisLine={{ stroke: 'var(--border)' }}
+                />
+                <YAxis
+                  domain={[50, 120]}
+                  tick={{ fontSize: 12, fill: 'var(--muted)' }}
+                  axisLine={{ stroke: 'var(--border)' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--white)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="restingHr"
+                  name="Resting"
+                  stroke="var(--sage)"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: 'var(--sage)' }}
+                  connectNulls
+                />
+                <Line
+                  type="monotone"
+                  dataKey="recoveryHr"
+                  name="Recovery"
+                  stroke="var(--terracotta)"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: 'var(--terracotta)' }}
+                  connectNulls
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
 
-            return (
-              <Link
-                key={day.toISOString()}
-                href={`/log?date=${format(day, 'yyyy-MM-dd')}`}
-                className={`
-                  aspect-square flex flex-col items-center justify-center rounded-lg transition-all p-2
-                  ${!inMonth ? 'opacity-30' : ''}
-                  ${isTodayDate ? 'ring-2 ring-[var(--primary)]' : ''}
-                  ${completed ? 'bg-[var(--success-light)]' : dayLog ? 'bg-blue-50' : 'hover:bg-gray-50'}
-                `}
-              >
-                <span className={`text-lg ${isTodayDate ? 'font-bold text-[var(--primary)]' : ''}`}>
-                  {format(day, 'd')}
-                </span>
-                {completed && <span className="text-sm">✅</span>}
-                {dayLog && !completed && <span className="text-sm">🔄</span>}
-              </Link>
-            )
-          })}
-        </div>
+        {/* Rowing Progress */}
+        {chartData.length > 0 && (
+          <div className="card p-6 animate-fade-in delay-4">
+            <h2 className="text-xl mb-6">Rowing Duration</h2>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 12, fill: 'var(--muted)' }}
+                  axisLine={{ stroke: 'var(--border)' }}
+                />
+                <YAxis
+                  domain={[0, 30]}
+                  tick={{ fontSize: 12, fill: 'var(--muted)' }}
+                  axisLine={{ stroke: 'var(--border)' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--white)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="rowing"
+                  name="Minutes"
+                  stroke="var(--forest)"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: 'var(--forest)' }}
+                  connectNulls
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {chartData.length === 0 && (
+          <div className="card p-8 text-center animate-fade-in">
+            <div className="text-5xl mb-4">📊</div>
+            <p className="text-lg text-[var(--muted)]">
+              Start logging workouts to see your progress charts!
+            </p>
+          </div>
+        )}
       </div>
-
-      {/* O2 Saturation Chart */}
-      {chartData.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-8">
-          <h2 className="text-2xl font-semibold mb-6">O2 Saturation Trends</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-              <YAxis domain={[85, 100]} tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="restingO2"
-                name="Resting O2%"
-                stroke="#2563eb"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-                connectNulls
-              />
-              <Line
-                type="monotone"
-                dataKey="recoveryO2"
-                name="Recovery O2%"
-                stroke="#16a34a"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-                connectNulls
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
-      {/* Heart Rate Chart */}
-      {chartData.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-8">
-          <h2 className="text-2xl font-semibold mb-6">Heart Rate Trends</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-              <YAxis domain={[50, 120]} tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="restingHr"
-                name="Resting HR"
-                stroke="#dc2626"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-                connectNulls
-              />
-              <Line
-                type="monotone"
-                dataKey="recoveryHr"
-                name="Recovery HR"
-                stroke="#f97316"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-                connectNulls
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
-      {/* Rowing Duration Chart */}
-      {chartData.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-[var(--border)] mb-8">
-          <h2 className="text-2xl font-semibold mb-6">Rowing Duration Progress</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-              <YAxis domain={[0, 30]} tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="rowing"
-                name="Duration (min)"
-                stroke="#8b5cf6"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-                connectNulls
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
-      {chartData.length === 0 && (
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-[var(--border)] text-center">
-          <p className="text-xl text-[var(--muted)]">
-            Start logging your workouts to see progress charts!
-          </p>
-        </div>
-      )}
     </div>
   )
 }
