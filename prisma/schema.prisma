@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model DailyLog {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @unique @db.Date
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Pre-exercise
+  restingO2Sat   Int?
+  restingHr      Int?
+  inogenSetting  Int?
+  symptomsScore  Int?
+
+  // Warm-up
+  seatedMarching          Boolean @default(false)
+  shoulderRolls           Boolean @default(false)
+  diaphragmaticBreathing  Boolean @default(false)
+  pursedLipBreathingWarmup Boolean @default(false)
+
+  // Strength training - with weight/reps tracking
+  bicepCurlsDone     Boolean @default(false)
+  bicepCurlsWeight   String?
+  bicepCurlsReps     String?
+
+  tricepExtDone      Boolean @default(false)
+  tricepExtWeight    String?
+  tricepExtReps      String?
+
+  shoulderPressDone   Boolean @default(false)
+  shoulderPressWeight String?
+  shoulderPressReps   String?
+
+  chestPressDone     Boolean @default(false)
+  chestPressBand     String?
+  chestPressReps     String?
+
+  seatedRowsDone     Boolean @default(false)
+  seatedRowsBand     String?
+  seatedRowsReps     String?
+
+  sitToStandsDone    Boolean @default(false)
+  sitToStandsReps    String?
+
+  legLiftsDone       Boolean @default(false)
+  legLiftsReps       String?
+
+  miniSquatsDone     Boolean @default(false)
+  miniSquatsReps     String?
+
+  // Aerobic - Rowing
+  rowingDuration Int?
+  rowingAvgO2    Int?
+  rowingLowO2    Int?
+  rowingHr       Int?
+  rowingInogen   Int?
+
+  // Cool down
+  lightRowing               Boolean @default(false)
+  stretching                Boolean @default(false)
+  pursedLipBreathingCooldown Boolean @default(false)
+
+  // Post-exercise
+  recoveryO2 Int?
+  recoveryHr Int?
+  notes      String?
+
+  @@map("daily_logs")
+}
