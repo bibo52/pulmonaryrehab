@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, isToday, isSameDay } from 'date-fns'
 import Link from 'next/link'
 import type { DailyLog } from '@/generated/prisma/client'
+import QuickLogButton from './QuickLogButton'
 
 async function getWeekLogs(): Promise<DailyLog[]> {
   const today = new Date()
@@ -118,6 +119,13 @@ export default async function DashboardPage() {
           >
             {todayComplete ? 'View Today\'s Log' : todayLog ? 'Continue Workout' : 'Start Today\'s Workout'}
           </Link>
+
+          {/* Quick Log option - only show when no log exists for today */}
+          {!todayLog && (
+            <div className="mt-4">
+              <QuickLogButton />
+            </div>
+          )}
         </div>
       </div>
 
