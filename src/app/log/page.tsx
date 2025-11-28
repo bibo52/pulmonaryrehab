@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { format, parseISO } from 'date-fns'
 import Link from 'next/link'
@@ -111,26 +111,23 @@ function NumberInput({
   return (
     <div>
       <label className="block text-sm font-semibold text-[var(--forest)] mb-2">{label}</label>
-      <div className="number-stepper">
-        <button
-          type="button"
-          onClick={() => onChange(Math.max(min, (value ?? min) - 1))}
-        >
-          −
-        </button>
+      <div className="flex items-center gap-2">
         <input
           type="number"
+          inputMode="numeric"
+          pattern="[0-9]*"
           value={value ?? ''}
-          onChange={(e) => onChange(e.target.value ? parseInt(e.target.value) : null)}
+          onChange={(e) => {
+            const val = e.target.value ? parseInt(e.target.value) : null
+            if (val === null || (val >= min && val <= max)) {
+              onChange(val)
+            }
+          }}
           min={min}
           max={max}
+          placeholder={`${min}-${max}`}
+          className="w-20 text-center text-lg font-semibold"
         />
-        <button
-          type="button"
-          onClick={() => onChange(Math.min(max, (value ?? min) + 1))}
-        >
-          +
-        </button>
         {unit && <span className="text-[var(--muted)] font-medium">{unit}</span>}
       </div>
     </div>
@@ -182,6 +179,8 @@ function StrengthExercise({
   weightLabel?: string
   weightOptions: string[]
 }) {
+  const repPresets = ['10×2', '12×3', '15×3']
+
   return (
     <div className={`exercise-item ${done ? 'completed' : ''}`}>
       <label className="flex items-center gap-4 cursor-pointer">
@@ -196,29 +195,51 @@ function StrengthExercise({
         {done && <span className="text-xl text-[var(--sage)]">✓</span>}
       </label>
       {done && (
-        <div className="grid grid-cols-2 gap-3 mt-4 ml-10">
+        <div className="mt-4 ml-10 space-y-3">
           <div>
-            <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">{weightLabel}</label>
-            <select
-              value={weight}
-              onChange={(e) => onWeightChange(e.target.value)}
-              className="mt-1"
-            >
-              <option value="">Select...</option>
+            <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide block mb-2">{weightLabel}</label>
+            <div className="flex flex-wrap gap-2">
               {weightOptions.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => onWeightChange(opt)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    weight === opt
+                      ? 'bg-[var(--sage)] text-white'
+                      : 'bg-[var(--cream-dark)] text-[var(--forest)] hover:bg-[var(--mist)]'
+                  }`}
+                >
+                  {opt}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
           <div>
-            <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Reps × Sets</label>
-            <input
-              type="text"
-              value={reps}
-              onChange={(e) => onRepsChange(e.target.value)}
-              placeholder="e.g., 12×3"
-              className="mt-1"
-            />
+            <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide block mb-2">Reps × Sets</label>
+            <div className="flex flex-wrap gap-2">
+              {repPresets.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => onRepsChange(preset)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    reps === preset
+                      ? 'bg-[var(--sage)] text-white'
+                      : 'bg-[var(--cream-dark)] text-[var(--forest)] hover:bg-[var(--mist)]'
+                  }`}
+                >
+                  {preset}
+                </button>
+              ))}
+              <input
+                type="text"
+                value={repPresets.includes(reps) ? '' : reps}
+                onChange={(e) => onRepsChange(e.target.value)}
+                placeholder="other"
+                className="w-16 px-2 py-1.5 text-sm rounded-lg"
+              />
+            </div>
           </div>
         </div>
       )}
@@ -239,6 +260,8 @@ function BodyweightExercise({
   reps: string
   onRepsChange: (val: string) => void
 }) {
+  const repPresets = ['10×2', '12×3', '15×3']
+
   return (
     <div className={`exercise-item ${done ? 'completed' : ''}`}>
       <label className="flex items-center gap-4 cursor-pointer">
@@ -254,14 +277,30 @@ function BodyweightExercise({
       </label>
       {done && (
         <div className="mt-4 ml-10">
-          <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Reps × Sets</label>
-          <input
-            type="text"
-            value={reps}
-            onChange={(e) => onRepsChange(e.target.value)}
-            placeholder="e.g., 10×2"
-            className="mt-1 max-w-[200px]"
-          />
+          <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide block mb-2">Reps × Sets</label>
+          <div className="flex flex-wrap gap-2">
+            {repPresets.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => onRepsChange(preset)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  reps === preset
+                    ? 'bg-[var(--sage)] text-white'
+                    : 'bg-[var(--cream-dark)] text-[var(--forest)] hover:bg-[var(--mist)]'
+                }`}
+              >
+                {preset}
+              </button>
+            ))}
+            <input
+              type="text"
+              value={repPresets.includes(reps) ? '' : reps}
+              onChange={(e) => onRepsChange(e.target.value)}
+              placeholder="other"
+              className="w-16 px-2 py-1.5 text-sm rounded-lg"
+            />
+          </div>
         </div>
       )}
     </div>
@@ -279,16 +318,68 @@ function SectionHeader({ icon, title }: { icon: string; title: string }) {
   )
 }
 
+function CollapsibleSection({
+  icon,
+  title,
+  children,
+  defaultOpen = false,
+  badge,
+}: {
+  icon: string
+  title: string
+  children: React.ReactNode
+  defaultOpen?: boolean
+  badge?: string
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen)
+
+  return (
+    <div className="card p-6 animate-fade-in">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between"
+      >
+        <div className="section-header mb-0">
+          <div className="icon-wrap">
+            <span>{icon}</span>
+          </div>
+          <h2 className="text-xl">{title}</h2>
+          {badge && (
+            <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-[var(--sage-light)] text-[var(--forest)] rounded-full">
+              {badge}
+            </span>
+          )}
+        </div>
+        <svg
+          className={`w-5 h-5 text-[var(--muted)] transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {isOpen && <div className="mt-6">{children}</div>}
+    </div>
+  )
+}
+
 function LogPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const dateParam = searchParams.get('date') || format(new Date(), 'yyyy-MM-dd')
   const [log, setLog] = useState<LogData>({ ...defaultLog, date: dateParam })
   const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const [hasExistingLog, setHasExistingLog] = useState(false)
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const initialLoadRef = useRef(true)
 
+  // Fetch existing log for this date, or pre-fill from most recent log
   const fetchLog = useCallback(async () => {
     try {
+      // First, try to get log for this specific date
       const res = await fetch(`/api/logs?startDate=${dateParam}&endDate=${dateParam}`)
       if (res.ok) {
         const logs = await res.json()
@@ -299,10 +390,45 @@ function LogPageContent() {
             ...existingLog,
             date: dateParam,
           })
+          setHasExistingLog(true)
+          initialLoadRef.current = false
+          return
         }
       }
+
+      // No log for today - fetch most recent log to pre-fill defaults
+      const recentRes = await fetch('/api/logs?limit=1')
+      if (recentRes.ok) {
+        const recentLogs = await recentRes.json()
+        if (recentLogs.length > 0) {
+          const previousLog = recentLogs[0]
+          // Pre-fill with previous values but reset checkboxes to false
+          setLog({
+            ...defaultLog,
+            date: dateParam,
+            // Keep equipment settings and weights from last time
+            inogenSetting: previousLog.inogenSetting,
+            bicepCurlsWeight: previousLog.bicepCurlsWeight || '',
+            bicepCurlsReps: previousLog.bicepCurlsReps || '',
+            tricepExtWeight: previousLog.tricepExtWeight || '',
+            tricepExtReps: previousLog.tricepExtReps || '',
+            shoulderPressWeight: previousLog.shoulderPressWeight || '',
+            shoulderPressReps: previousLog.shoulderPressReps || '',
+            chestPressBand: previousLog.chestPressBand || '',
+            chestPressReps: previousLog.chestPressReps || '',
+            seatedRowsBand: previousLog.seatedRowsBand || '',
+            seatedRowsReps: previousLog.seatedRowsReps || '',
+            sitToStandsReps: previousLog.sitToStandsReps || '',
+            legLiftsReps: previousLog.legLiftsReps || '',
+            miniSquatsReps: previousLog.miniSquatsReps || '',
+            rowingInogen: previousLog.rowingInogen,
+          })
+        }
+      }
+      initialLoadRef.current = false
     } catch (err) {
       console.error('Failed to fetch log:', err)
+      initialLoadRef.current = false
     }
   }, [dateParam])
 
@@ -310,24 +436,48 @@ function LogPageContent() {
     fetchLog()
   }, [fetchLog])
 
-  async function handleSave() {
+  // Auto-save with debouncing
+  const autoSave = useCallback(async (logData: LogData) => {
     setSaving(true)
+    setSaveStatus('saving')
     try {
       const res = await fetch('/api/logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(log),
+        body: JSON.stringify(logData),
       })
       if (res.ok) {
-        setSaved(true)
-        setTimeout(() => setSaved(false), 2000)
+        setSaveStatus('saved')
+        setHasExistingLog(true)
+        setTimeout(() => setSaveStatus('idle'), 1500)
       }
     } catch (err) {
       console.error('Failed to save:', err)
+      setSaveStatus('idle')
     } finally {
       setSaving(false)
     }
-  }
+  }, [])
+
+  // Trigger auto-save when log changes (with debounce)
+  useEffect(() => {
+    // Skip auto-save during initial load
+    if (initialLoadRef.current) return
+
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current)
+    }
+
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      autoSave(log)
+    }, 1000) // 1 second debounce
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current)
+      }
+    }
+  }, [log, autoSave])
 
   function updateLog<K extends keyof LogData>(key: K, value: LogData[K]) {
     setLog((prev) => ({ ...prev, [key]: value }))
@@ -352,13 +502,32 @@ function LogPageContent() {
             <h1 className="text-xl">{format(displayDate, 'EEEE')}</h1>
             <p className="text-sm text-[var(--muted)]">{format(displayDate, 'MMMM d, yyyy')}</p>
           </div>
+          {/* Auto-save status indicator */}
+          <div className="text-sm text-[var(--muted)] flex items-center gap-1.5">
+            {saveStatus === 'saving' && (
+              <>
+                <span className="w-2 h-2 bg-[var(--terracotta)] rounded-full animate-pulse" />
+                Saving...
+              </>
+            )}
+            {saveStatus === 'saved' && (
+              <>
+                <span className="text-[var(--sage)]">✓</span>
+                Saved
+              </>
+            )}
+          </div>
         </div>
       </header>
 
       <div className="p-4 max-w-2xl mx-auto space-y-6">
-        {/* Pre-Exercise Section */}
-        <section className="card p-6 animate-fade-in">
-          <SectionHeader icon="📊" title="Pre-Exercise" />
+        {/* Pre-Exercise Section - Collapsible */}
+        <CollapsibleSection
+          icon="📊"
+          title="Pre-Exercise Vitals"
+          defaultOpen={false}
+          badge="optional"
+        >
           <div className="grid grid-cols-2 gap-4">
             <NumberInput
               label="O2 Saturation"
@@ -392,7 +561,7 @@ function LogPageContent() {
               unit="/ 10"
             />
           </div>
-        </section>
+        </CollapsibleSection>
 
         {/* Warm-Up Section */}
         <section className="card p-6 animate-fade-in delay-1">
@@ -569,9 +738,13 @@ function LogPageContent() {
           </div>
         </section>
 
-        {/* Post-Exercise Section */}
-        <section className="card p-6 animate-fade-in">
-          <SectionHeader icon="📈" title="Post-Exercise" />
+        {/* Post-Exercise Section - Collapsible */}
+        <CollapsibleSection
+          icon="📈"
+          title="Post-Exercise Vitals"
+          defaultOpen={false}
+          badge="optional"
+        >
           <div className="grid grid-cols-2 gap-4 mb-6">
             <NumberInput
               label="Recovery O2 Sat"
@@ -590,35 +763,30 @@ function LogPageContent() {
               unit="bpm"
             />
           </div>
-          <div>
-            <label className="block text-sm font-semibold text-[var(--forest)] mb-2">Notes</label>
-            <textarea
-              value={log.notes}
-              onChange={(e) => updateLog('notes', e.target.value)}
-              placeholder="How did you feel? Any symptoms..."
-              rows={3}
-              className="w-full"
-            />
-          </div>
+        </CollapsibleSection>
+
+        {/* Notes section - always visible */}
+        <section className="card p-6 animate-fade-in">
+          <SectionHeader icon="📝" title="Notes" />
+          <textarea
+            value={log.notes}
+            onChange={(e) => updateLog('notes', e.target.value)}
+            placeholder="How did you feel? Any symptoms..."
+            rows={3}
+            className="w-full"
+          />
         </section>
       </div>
 
-      {/* Floating Save Bar */}
+      {/* Floating Done Bar */}
       <div className="floating-bar">
-        <div className="max-w-2xl mx-auto flex gap-3">
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="flex-1 btn-secondary"
+        <div className="max-w-2xl mx-auto">
+          <Link
+            href="/dashboard"
+            className="block w-full btn-primary text-center"
           >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className={`flex-1 ${saved ? 'bg-[var(--success)] text-white' : 'btn-primary'} disabled:opacity-50`}
-          >
-            {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Log'}
-          </button>
+            {saving ? 'Saving...' : 'Done'}
+          </Link>
         </div>
       </div>
     </div>

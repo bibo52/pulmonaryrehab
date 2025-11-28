@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
+  const limit = searchParams.get('limit')
 
   const where: { date?: { gte?: Date; lte?: Date } } = {}
   if (startDate || endDate) {
@@ -21,6 +22,7 @@ export async function GET(request: NextRequest) {
   const logs = await prisma.dailyLog.findMany({
     where,
     orderBy: { date: 'desc' },
+    ...(limit ? { take: parseInt(limit) } : {}),
   })
 
   return NextResponse.json(logs)
