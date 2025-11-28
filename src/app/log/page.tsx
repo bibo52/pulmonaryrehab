@@ -704,6 +704,7 @@ function LogPageContent() {
         {/* Post-Exercise Section */}
         <section className="card p-6 animate-fade-in">
           <SectionHeader icon="📈" title="Post-Exercise Vitals" />
+          <p className="text-sm text-[var(--muted)] mb-4">Measure after 3 minutes of rest</p>
           <div className="grid grid-cols-2 gap-4">
             <NumberInput
               label="Recovery O2 Sat"

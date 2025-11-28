@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Serif_Display, Source_Sans_3 } from "next/font/google";
+import { Instrument_Serif, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 
-const dmSerif = DM_Serif_Display({
+const instrumentSerif = Instrument_Serif({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-display",
@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dmSerif.variable} ${sourceSans.variable}`}>
+    <html lang="en" className={`${instrumentSerif.variable} ${sourceSans.variable}`}>
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
