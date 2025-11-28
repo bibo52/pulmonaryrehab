@@ -176,6 +176,7 @@ button, .btn {
   background: linear-gradient(135deg, var(--sage) 0%, var(--sage-dark) 100%);
   color: var(--white);
   box-shadow: 0 4px 16px rgba(124, 152, 133, 0.3);
+  border-radius: 9999px;
 }
 
 .btn-primary:hover {
