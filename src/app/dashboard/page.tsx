@@ -5,6 +5,7 @@ import { format, startOfWeek, endOfWeek, eachDayOfInterval, isToday, isSameDay }
 import Link from 'next/link'
 import type { DailyLog } from '@/generated/prisma/client'
 import QuickLogButton from './QuickLogButton'
+import DiscardButton from './DiscardButton'
 
 async function getWeekLogs(): Promise<DailyLog[]> {
   const today = new Date()
@@ -124,6 +125,13 @@ export default async function DashboardPage() {
           {!todayLog && (
             <div className="mt-4">
               <QuickLogButton />
+            </div>
+          )}
+
+          {/* Discard option - show when log exists but isn't complete */}
+          {todayLog && !todayComplete && (
+            <div className="mt-4 text-center">
+              <DiscardButton date={format(today, 'yyyy-MM-dd')} />
             </div>
           )}
         </div>

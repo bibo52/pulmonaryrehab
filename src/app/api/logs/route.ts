@@ -44,3 +44,22 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json(log)
 }
+
+export async function DELETE(request: NextRequest) {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { searchParams } = new URL(request.url)
+  const date = searchParams.get('date')
+
+  if (!date) {
+    return NextResponse.json({ error: 'Date required' }, { status: 400 })
+  }
+
+  await prisma.dailyLog.delete({
+    where: { date: new Date(date) },
+  })
+
+  return NextResponse.json({ success: true })
+}
