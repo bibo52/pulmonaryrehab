@@ -97,16 +97,14 @@ function NumberInput({
   label,
   value,
   onChange,
-  min = 0,
-  max = 200,
   unit = '',
+  placeholder = '',
 }: {
   label: string
   value: number | null
   onChange: (val: number | null) => void
-  min?: number
-  max?: number
   unit?: string
+  placeholder?: string
 }) {
   return (
     <div>
@@ -119,14 +117,10 @@ function NumberInput({
           value={value ?? ''}
           onChange={(e) => {
             const val = e.target.value ? parseInt(e.target.value) : null
-            if (val === null || (val >= min && val <= max)) {
-              onChange(val)
-            }
+            onChange(val)
           }}
-          min={min}
-          max={max}
-          placeholder={`${min}-${max}`}
-          className="w-20 text-center text-lg font-semibold"
+          placeholder={placeholder}
+          className="w-24 text-center text-lg font-semibold"
         />
         {unit && <span className="text-[var(--muted)] font-medium">{unit}</span>}
       </div>
@@ -396,32 +390,20 @@ function LogPageContent() {
         }
       }
 
-      // No log for today - fetch most recent log to pre-fill defaults
+      // No log for today - fetch most recent log to pre-fill pre-exercise vitals only
       const recentRes = await fetch('/api/logs?limit=1')
       if (recentRes.ok) {
         const recentLogs = await recentRes.json()
         if (recentLogs.length > 0) {
           const previousLog = recentLogs[0]
-          // Pre-fill with previous values but reset checkboxes to false
+          // Only pre-fill pre-exercise vitals from last time
           setLog({
             ...defaultLog,
             date: dateParam,
-            // Keep equipment settings and weights from last time
+            restingO2Sat: previousLog.restingO2Sat,
+            restingHr: previousLog.restingHr,
             inogenSetting: previousLog.inogenSetting,
-            bicepCurlsWeight: previousLog.bicepCurlsWeight || '',
-            bicepCurlsReps: previousLog.bicepCurlsReps || '',
-            tricepExtWeight: previousLog.tricepExtWeight || '',
-            tricepExtReps: previousLog.tricepExtReps || '',
-            shoulderPressWeight: previousLog.shoulderPressWeight || '',
-            shoulderPressReps: previousLog.shoulderPressReps || '',
-            chestPressBand: previousLog.chestPressBand || '',
-            chestPressReps: previousLog.chestPressReps || '',
-            seatedRowsBand: previousLog.seatedRowsBand || '',
-            seatedRowsReps: previousLog.seatedRowsReps || '',
-            sitToStandsReps: previousLog.sitToStandsReps || '',
-            legLiftsReps: previousLog.legLiftsReps || '',
-            miniSquatsReps: previousLog.miniSquatsReps || '',
-            rowingInogen: previousLog.rowingInogen,
+            symptomsScore: previousLog.symptomsScore,
           })
         }
       }
@@ -521,47 +503,37 @@ function LogPageContent() {
       </header>
 
       <div className="p-4 max-w-2xl mx-auto space-y-6">
-        {/* Pre-Exercise Section - Collapsible */}
-        <CollapsibleSection
-          icon="📊"
-          title="Pre-Exercise Vitals"
-          defaultOpen={false}
-          badge="optional"
-        >
+        {/* Pre-Exercise Section */}
+        <section className="card p-6 animate-fade-in">
+          <SectionHeader icon="📊" title="Pre-Exercise Vitals" />
           <div className="grid grid-cols-2 gap-4">
             <NumberInput
               label="O2 Saturation"
               value={log.restingO2Sat}
               onChange={(v) => updateLog('restingO2Sat', v)}
-              min={70}
-              max={100}
               unit="%"
             />
             <NumberInput
               label="Heart Rate"
               value={log.restingHr}
               onChange={(v) => updateLog('restingHr', v)}
-              min={40}
-              max={150}
               unit="bpm"
             />
             <NumberInput
               label="Inogen Setting"
               value={log.inogenSetting}
               onChange={(v) => updateLog('inogenSetting', v)}
-              min={1}
-              max={6}
+              placeholder="1-6"
             />
             <NumberInput
               label="Symptoms"
               value={log.symptomsScore}
               onChange={(v) => updateLog('symptomsScore', v)}
-              min={0}
-              max={10}
               unit="/ 10"
+              placeholder="0-10"
             />
           </div>
-        </CollapsibleSection>
+        </section>
 
         {/* Warm-Up Section */}
         <section className="card p-6 animate-fade-in delay-1">
@@ -678,40 +650,31 @@ function LogPageContent() {
               label="Duration"
               value={log.rowingDuration}
               onChange={(v) => updateLog('rowingDuration', v)}
-              min={0}
-              max={60}
               unit="min"
             />
             <NumberInput
               label="Avg O2 Sat"
               value={log.rowingAvgO2}
               onChange={(v) => updateLog('rowingAvgO2', v)}
-              min={70}
-              max={100}
               unit="%"
             />
             <NumberInput
               label="Lowest O2 Sat"
               value={log.rowingLowO2}
               onChange={(v) => updateLog('rowingLowO2', v)}
-              min={70}
-              max={100}
               unit="%"
             />
             <NumberInput
               label="Heart Rate"
               value={log.rowingHr}
               onChange={(v) => updateLog('rowingHr', v)}
-              min={40}
-              max={180}
               unit="bpm"
             />
             <NumberInput
               label="Inogen Setting"
               value={log.rowingInogen}
               onChange={(v) => updateLog('rowingInogen', v)}
-              min={1}
-              max={6}
+              placeholder="1-6"
             />
           </div>
         </section>
@@ -738,32 +701,24 @@ function LogPageContent() {
           </div>
         </section>
 
-        {/* Post-Exercise Section - Collapsible */}
-        <CollapsibleSection
-          icon="📈"
-          title="Post-Exercise Vitals"
-          defaultOpen={false}
-          badge="optional"
-        >
-          <div className="grid grid-cols-2 gap-4 mb-6">
+        {/* Post-Exercise Section */}
+        <section className="card p-6 animate-fade-in">
+          <SectionHeader icon="📈" title="Post-Exercise Vitals" />
+          <div className="grid grid-cols-2 gap-4">
             <NumberInput
               label="Recovery O2 Sat"
               value={log.recoveryO2}
               onChange={(v) => updateLog('recoveryO2', v)}
-              min={70}
-              max={100}
               unit="%"
             />
             <NumberInput
               label="Recovery HR"
               value={log.recoveryHr}
               onChange={(v) => updateLog('recoveryHr', v)}
-              min={40}
-              max={150}
               unit="bpm"
             />
           </div>
-        </CollapsibleSection>
+        </section>
 
         {/* Notes section - always visible */}
         <section className="card p-6 animate-fade-in">
