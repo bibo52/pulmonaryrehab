@@ -19,24 +19,78 @@ interface LogData {
   bicepCurlsDone: boolean
   bicepCurlsWeight: string
   bicepCurlsReps: string
+  bicepCurlsO2: number | null
+  bicepCurlsPR: number | null
+  bicepCurlsInogen: number | null
   tricepExtDone: boolean
   tricepExtWeight: string
   tricepExtReps: string
+  tricepExtO2: number | null
+  tricepExtPR: number | null
+  tricepExtInogen: number | null
   shoulderPressDone: boolean
   shoulderPressWeight: string
   shoulderPressReps: string
+  shoulderPressO2: number | null
+  shoulderPressPR: number | null
+  shoulderPressInogen: number | null
   chestPressDone: boolean
   chestPressBand: string
   chestPressReps: string
+  chestPressO2: number | null
+  chestPressPR: number | null
+  chestPressInogen: number | null
   seatedRowsDone: boolean
   seatedRowsBand: string
   seatedRowsReps: string
+  seatedRowsO2: number | null
+  seatedRowsPR: number | null
+  seatedRowsInogen: number | null
   sitToStandsDone: boolean
   sitToStandsReps: string
+  sitToStandsO2: number | null
+  sitToStandsPR: number | null
+  sitToStandsInogen: number | null
   legLiftsDone: boolean
   legLiftsReps: string
+  legLiftsO2: number | null
+  legLiftsPR: number | null
+  legLiftsInogen: number | null
   miniSquatsDone: boolean
   miniSquatsReps: string
+  miniSquatsO2: number | null
+  miniSquatsPR: number | null
+  miniSquatsInogen: number | null
+  bandBicepsDone: boolean
+  bandBicepsWeight: string
+  bandBicepsReps: string
+  bandBicepsO2: number | null
+  bandBicepsPR: number | null
+  bandBicepsInogen: number | null
+  bandBackDone: boolean
+  bandBackWeight: string
+  bandBackReps: string
+  bandBackO2: number | null
+  bandBackPR: number | null
+  bandBackInogen: number | null
+  bandGlutesDone: boolean
+  bandGlutesWeight: string
+  bandGlutesReps: string
+  bandGlutesO2: number | null
+  bandGlutesPR: number | null
+  bandGlutesInogen: number | null
+  bandLegsDone: boolean
+  bandLegsWeight: string
+  bandLegsReps: string
+  bandLegsO2: number | null
+  bandLegsPR: number | null
+  bandLegsInogen: number | null
+  bandShouldersDone: boolean
+  bandShouldersWeight: string
+  bandShouldersReps: string
+  bandShouldersO2: number | null
+  bandShouldersPR: number | null
+  bandShouldersInogen: number | null
   rowingDuration: number | null
   rowingAvgO2: number | null
   rowingLowO2: number | null
@@ -63,24 +117,78 @@ const defaultLog: LogData = {
   bicepCurlsDone: false,
   bicepCurlsWeight: '',
   bicepCurlsReps: '',
+  bicepCurlsO2: null,
+  bicepCurlsPR: null,
+  bicepCurlsInogen: null,
   tricepExtDone: false,
   tricepExtWeight: '',
   tricepExtReps: '',
+  tricepExtO2: null,
+  tricepExtPR: null,
+  tricepExtInogen: null,
   shoulderPressDone: false,
   shoulderPressWeight: '',
   shoulderPressReps: '',
+  shoulderPressO2: null,
+  shoulderPressPR: null,
+  shoulderPressInogen: null,
   chestPressDone: false,
   chestPressBand: '',
   chestPressReps: '',
+  chestPressO2: null,
+  chestPressPR: null,
+  chestPressInogen: null,
   seatedRowsDone: false,
   seatedRowsBand: '',
   seatedRowsReps: '',
+  seatedRowsO2: null,
+  seatedRowsPR: null,
+  seatedRowsInogen: null,
   sitToStandsDone: false,
   sitToStandsReps: '',
+  sitToStandsO2: null,
+  sitToStandsPR: null,
+  sitToStandsInogen: null,
   legLiftsDone: false,
   legLiftsReps: '',
+  legLiftsO2: null,
+  legLiftsPR: null,
+  legLiftsInogen: null,
   miniSquatsDone: false,
   miniSquatsReps: '',
+  miniSquatsO2: null,
+  miniSquatsPR: null,
+  miniSquatsInogen: null,
+  bandBicepsDone: false,
+  bandBicepsWeight: '',
+  bandBicepsReps: '',
+  bandBicepsO2: null,
+  bandBicepsPR: null,
+  bandBicepsInogen: null,
+  bandBackDone: false,
+  bandBackWeight: '',
+  bandBackReps: '',
+  bandBackO2: null,
+  bandBackPR: null,
+  bandBackInogen: null,
+  bandGlutesDone: false,
+  bandGlutesWeight: '',
+  bandGlutesReps: '',
+  bandGlutesO2: null,
+  bandGlutesPR: null,
+  bandGlutesInogen: null,
+  bandLegsDone: false,
+  bandLegsWeight: '',
+  bandLegsReps: '',
+  bandLegsO2: null,
+  bandLegsPR: null,
+  bandLegsInogen: null,
+  bandShouldersDone: false,
+  bandShouldersWeight: '',
+  bandShouldersReps: '',
+  bandShouldersO2: null,
+  bandShouldersPR: null,
+  bandShouldersInogen: null,
   rowingDuration: null,
   rowingAvgO2: null,
   rowingLowO2: null,
@@ -161,6 +269,12 @@ function StrengthExercise({
   onWeightChange,
   reps,
   onRepsChange,
+  o2,
+  onO2Change,
+  pr,
+  onPRChange,
+  inogen,
+  onInogenChange,
   weightLabel = 'Weight',
   weightOptions,
 }: {
@@ -171,6 +285,12 @@ function StrengthExercise({
   onWeightChange: (val: string) => void
   reps: string
   onRepsChange: (val: string) => void
+  o2?: number | null
+  onO2Change?: (val: number | null) => void
+  pr?: number | null
+  onPRChange?: (val: number | null) => void
+  inogen?: number | null
+  onInogenChange?: (val: number | null) => void
   weightLabel?: string
   weightOptions: string[]
 }) {
@@ -236,6 +356,49 @@ function StrengthExercise({
               />
             </div>
           </div>
+          {onO2Change && onPRChange && onInogenChange && (
+            <div className="pt-2 border-t border-[var(--border)]">
+              <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide block mb-2">Post-Exercise Vitals</label>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={o2 ?? ''}
+                    onChange={(e) => onO2Change(e.target.value ? parseInt(e.target.value) : null)}
+                    placeholder="O2"
+                    className="w-full px-2 py-1.5 text-sm text-center rounded-lg"
+                  />
+                  <span className="text-xs text-[var(--muted)] block text-center mt-1">O2 %</span>
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={pr ?? ''}
+                    onChange={(e) => onPRChange(e.target.value ? parseInt(e.target.value) : null)}
+                    placeholder="PR"
+                    className="w-full px-2 py-1.5 text-sm text-center rounded-lg"
+                  />
+                  <span className="text-xs text-[var(--muted)] block text-center mt-1">Pulse</span>
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={inogen ?? ''}
+                    onChange={(e) => onInogenChange(e.target.value ? parseInt(e.target.value) : null)}
+                    placeholder="1-6"
+                    className="w-full px-2 py-1.5 text-sm text-center rounded-lg"
+                  />
+                  <span className="text-xs text-[var(--muted)] block text-center mt-1">Inogen</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -248,12 +411,24 @@ function BodyweightExercise({
   onDoneChange,
   reps,
   onRepsChange,
+  o2,
+  onO2Change,
+  pr,
+  onPRChange,
+  inogen,
+  onInogenChange,
 }: {
   name: string
   done: boolean
   onDoneChange: (val: boolean) => void
   reps: string
   onRepsChange: (val: string) => void
+  o2?: number | null
+  onO2Change?: (val: number | null) => void
+  pr?: number | null
+  onPRChange?: (val: number | null) => void
+  inogen?: number | null
+  onInogenChange?: (val: number | null) => void
 }) {
   const repPresets = ['10×2', '12×3', '15×3']
 
@@ -271,31 +446,76 @@ function BodyweightExercise({
         {done && <span className="text-xl text-[var(--sage)]">✓</span>}
       </label>
       {done && (
-        <div className="mt-4 ml-10">
-          <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide block mb-2">Reps × Sets</label>
-          <div className="flex flex-wrap gap-2">
-            {repPresets.map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => onRepsChange(preset)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  reps === preset
-                    ? 'bg-[var(--sage)] text-white'
-                    : 'bg-[var(--cream-dark)] text-[var(--forest)] hover:bg-[var(--mist)]'
-                }`}
-              >
-                {preset}
-              </button>
-            ))}
-            <input
-              type="text"
-              value={repPresets.includes(reps) ? '' : reps}
-              onChange={(e) => onRepsChange(e.target.value)}
-              placeholder="other"
-              className="w-16 px-2 py-1.5 text-sm rounded-lg"
-            />
+        <div className="mt-4 ml-10 space-y-3">
+          <div>
+            <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide block mb-2">Reps × Sets</label>
+            <div className="flex flex-wrap gap-2">
+              {repPresets.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => onRepsChange(preset)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    reps === preset
+                      ? 'bg-[var(--sage)] text-white'
+                      : 'bg-[var(--cream-dark)] text-[var(--forest)] hover:bg-[var(--mist)]'
+                  }`}
+                >
+                  {preset}
+                </button>
+              ))}
+              <input
+                type="text"
+                value={repPresets.includes(reps) ? '' : reps}
+                onChange={(e) => onRepsChange(e.target.value)}
+                placeholder="other"
+                className="w-16 px-2 py-1.5 text-sm rounded-lg"
+              />
+            </div>
           </div>
+          {onO2Change && onPRChange && onInogenChange && (
+            <div className="pt-2 border-t border-[var(--border)]">
+              <label className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide block mb-2">Post-Exercise Vitals</label>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={o2 ?? ''}
+                    onChange={(e) => onO2Change(e.target.value ? parseInt(e.target.value) : null)}
+                    placeholder="O2"
+                    className="w-full px-2 py-1.5 text-sm text-center rounded-lg"
+                  />
+                  <span className="text-xs text-[var(--muted)] block text-center mt-1">O2 %</span>
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={pr ?? ''}
+                    onChange={(e) => onPRChange(e.target.value ? parseInt(e.target.value) : null)}
+                    placeholder="PR"
+                    className="w-full px-2 py-1.5 text-sm text-center rounded-lg"
+                  />
+                  <span className="text-xs text-[var(--muted)] block text-center mt-1">Pulse</span>
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={inogen ?? ''}
+                    onChange={(e) => onInogenChange(e.target.value ? parseInt(e.target.value) : null)}
+                    placeholder="1-6"
+                    className="w-full px-2 py-1.5 text-sm text-center rounded-lg"
+                  />
+                  <span className="text-xs text-[var(--muted)] block text-center mt-1">Inogen</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -575,6 +795,12 @@ function LogPageContent() {
               onWeightChange={(v) => updateLog('bicepCurlsWeight', v)}
               reps={log.bicepCurlsReps}
               onRepsChange={(v) => updateLog('bicepCurlsReps', v)}
+              o2={log.bicepCurlsO2}
+              onO2Change={(v) => updateLog('bicepCurlsO2', v)}
+              pr={log.bicepCurlsPR}
+              onPRChange={(v) => updateLog('bicepCurlsPR', v)}
+              inogen={log.bicepCurlsInogen}
+              onInogenChange={(v) => updateLog('bicepCurlsInogen', v)}
               weightOptions={['3 lb', '5 lb', '8 lb', '10 lb']}
             />
             <StrengthExercise
@@ -585,6 +811,12 @@ function LogPageContent() {
               onWeightChange={(v) => updateLog('tricepExtWeight', v)}
               reps={log.tricepExtReps}
               onRepsChange={(v) => updateLog('tricepExtReps', v)}
+              o2={log.tricepExtO2}
+              onO2Change={(v) => updateLog('tricepExtO2', v)}
+              pr={log.tricepExtPR}
+              onPRChange={(v) => updateLog('tricepExtPR', v)}
+              inogen={log.tricepExtInogen}
+              onInogenChange={(v) => updateLog('tricepExtInogen', v)}
               weightOptions={['3 lb', '5 lb', '8 lb', '10 lb']}
             />
             <StrengthExercise
@@ -595,27 +827,130 @@ function LogPageContent() {
               onWeightChange={(v) => updateLog('shoulderPressWeight', v)}
               reps={log.shoulderPressReps}
               onRepsChange={(v) => updateLog('shoulderPressReps', v)}
+              o2={log.shoulderPressO2}
+              onO2Change={(v) => updateLog('shoulderPressO2', v)}
+              pr={log.shoulderPressPR}
+              onPRChange={(v) => updateLog('shoulderPressPR', v)}
+              inogen={log.shoulderPressInogen}
+              onInogenChange={(v) => updateLog('shoulderPressInogen', v)}
               weightOptions={['3 lb', '5 lb', '8 lb', '10 lb']}
             />
             <StrengthExercise
-              name="Chest Press"
+              name="Chest Press (Band)"
               done={log.chestPressDone}
               onDoneChange={(v) => updateLog('chestPressDone', v)}
               weight={log.chestPressBand}
               onWeightChange={(v) => updateLog('chestPressBand', v)}
               reps={log.chestPressReps}
               onRepsChange={(v) => updateLog('chestPressReps', v)}
+              o2={log.chestPressO2}
+              onO2Change={(v) => updateLog('chestPressO2', v)}
+              pr={log.chestPressPR}
+              onPRChange={(v) => updateLog('chestPressPR', v)}
+              inogen={log.chestPressInogen}
+              onInogenChange={(v) => updateLog('chestPressInogen', v)}
               weightLabel="Band"
               weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
             />
             <StrengthExercise
-              name="Seated Rows"
+              name="Seated Rows (Band)"
               done={log.seatedRowsDone}
               onDoneChange={(v) => updateLog('seatedRowsDone', v)}
               weight={log.seatedRowsBand}
               onWeightChange={(v) => updateLog('seatedRowsBand', v)}
               reps={log.seatedRowsReps}
               onRepsChange={(v) => updateLog('seatedRowsReps', v)}
+              o2={log.seatedRowsO2}
+              onO2Change={(v) => updateLog('seatedRowsO2', v)}
+              pr={log.seatedRowsPR}
+              onPRChange={(v) => updateLog('seatedRowsPR', v)}
+              inogen={log.seatedRowsInogen}
+              onInogenChange={(v) => updateLog('seatedRowsInogen', v)}
+              weightLabel="Band"
+              weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
+            />
+            <StrengthExercise
+              name="Band - Biceps"
+              done={log.bandBicepsDone}
+              onDoneChange={(v) => updateLog('bandBicepsDone', v)}
+              weight={log.bandBicepsWeight}
+              onWeightChange={(v) => updateLog('bandBicepsWeight', v)}
+              reps={log.bandBicepsReps}
+              onRepsChange={(v) => updateLog('bandBicepsReps', v)}
+              o2={log.bandBicepsO2}
+              onO2Change={(v) => updateLog('bandBicepsO2', v)}
+              pr={log.bandBicepsPR}
+              onPRChange={(v) => updateLog('bandBicepsPR', v)}
+              inogen={log.bandBicepsInogen}
+              onInogenChange={(v) => updateLog('bandBicepsInogen', v)}
+              weightLabel="Band"
+              weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
+            />
+            <StrengthExercise
+              name="Band - Back"
+              done={log.bandBackDone}
+              onDoneChange={(v) => updateLog('bandBackDone', v)}
+              weight={log.bandBackWeight}
+              onWeightChange={(v) => updateLog('bandBackWeight', v)}
+              reps={log.bandBackReps}
+              onRepsChange={(v) => updateLog('bandBackReps', v)}
+              o2={log.bandBackO2}
+              onO2Change={(v) => updateLog('bandBackO2', v)}
+              pr={log.bandBackPR}
+              onPRChange={(v) => updateLog('bandBackPR', v)}
+              inogen={log.bandBackInogen}
+              onInogenChange={(v) => updateLog('bandBackInogen', v)}
+              weightLabel="Band"
+              weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
+            />
+            <StrengthExercise
+              name="Band - Glutes"
+              done={log.bandGlutesDone}
+              onDoneChange={(v) => updateLog('bandGlutesDone', v)}
+              weight={log.bandGlutesWeight}
+              onWeightChange={(v) => updateLog('bandGlutesWeight', v)}
+              reps={log.bandGlutesReps}
+              onRepsChange={(v) => updateLog('bandGlutesReps', v)}
+              o2={log.bandGlutesO2}
+              onO2Change={(v) => updateLog('bandGlutesO2', v)}
+              pr={log.bandGlutesPR}
+              onPRChange={(v) => updateLog('bandGlutesPR', v)}
+              inogen={log.bandGlutesInogen}
+              onInogenChange={(v) => updateLog('bandGlutesInogen', v)}
+              weightLabel="Band"
+              weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
+            />
+            <StrengthExercise
+              name="Band - Legs"
+              done={log.bandLegsDone}
+              onDoneChange={(v) => updateLog('bandLegsDone', v)}
+              weight={log.bandLegsWeight}
+              onWeightChange={(v) => updateLog('bandLegsWeight', v)}
+              reps={log.bandLegsReps}
+              onRepsChange={(v) => updateLog('bandLegsReps', v)}
+              o2={log.bandLegsO2}
+              onO2Change={(v) => updateLog('bandLegsO2', v)}
+              pr={log.bandLegsPR}
+              onPRChange={(v) => updateLog('bandLegsPR', v)}
+              inogen={log.bandLegsInogen}
+              onInogenChange={(v) => updateLog('bandLegsInogen', v)}
+              weightLabel="Band"
+              weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
+            />
+            <StrengthExercise
+              name="Band - Shoulders"
+              done={log.bandShouldersDone}
+              onDoneChange={(v) => updateLog('bandShouldersDone', v)}
+              weight={log.bandShouldersWeight}
+              onWeightChange={(v) => updateLog('bandShouldersWeight', v)}
+              reps={log.bandShouldersReps}
+              onRepsChange={(v) => updateLog('bandShouldersReps', v)}
+              o2={log.bandShouldersO2}
+              onO2Change={(v) => updateLog('bandShouldersO2', v)}
+              pr={log.bandShouldersPR}
+              onPRChange={(v) => updateLog('bandShouldersPR', v)}
+              inogen={log.bandShouldersInogen}
+              onInogenChange={(v) => updateLog('bandShouldersInogen', v)}
               weightLabel="Band"
               weightOptions={['5 lb', '10 lb', '15 lb', '20 lb', '30 lb']}
             />
@@ -625,6 +960,12 @@ function LogPageContent() {
               onDoneChange={(v) => updateLog('sitToStandsDone', v)}
               reps={log.sitToStandsReps}
               onRepsChange={(v) => updateLog('sitToStandsReps', v)}
+              o2={log.sitToStandsO2}
+              onO2Change={(v) => updateLog('sitToStandsO2', v)}
+              pr={log.sitToStandsPR}
+              onPRChange={(v) => updateLog('sitToStandsPR', v)}
+              inogen={log.sitToStandsInogen}
+              onInogenChange={(v) => updateLog('sitToStandsInogen', v)}
             />
             <BodyweightExercise
               name="Standing Leg Lifts"
@@ -632,6 +973,12 @@ function LogPageContent() {
               onDoneChange={(v) => updateLog('legLiftsDone', v)}
               reps={log.legLiftsReps}
               onRepsChange={(v) => updateLog('legLiftsReps', v)}
+              o2={log.legLiftsO2}
+              onO2Change={(v) => updateLog('legLiftsO2', v)}
+              pr={log.legLiftsPR}
+              onPRChange={(v) => updateLog('legLiftsPR', v)}
+              inogen={log.legLiftsInogen}
+              onInogenChange={(v) => updateLog('legLiftsInogen', v)}
             />
             <BodyweightExercise
               name="Mini-Squats"
@@ -639,6 +986,12 @@ function LogPageContent() {
               onDoneChange={(v) => updateLog('miniSquatsDone', v)}
               reps={log.miniSquatsReps}
               onRepsChange={(v) => updateLog('miniSquatsReps', v)}
+              o2={log.miniSquatsO2}
+              onO2Change={(v) => updateLog('miniSquatsO2', v)}
+              pr={log.miniSquatsPR}
+              onPRChange={(v) => updateLog('miniSquatsPR', v)}
+              inogen={log.miniSquatsInogen}
+              onInogenChange={(v) => updateLog('miniSquatsInogen', v)}
             />
           </div>
         </section>

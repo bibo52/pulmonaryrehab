@@ -29,31 +29,91 @@ model DailyLog {
   bicepCurlsDone     Boolean @default(false)
   bicepCurlsWeight   String?
   bicepCurlsReps     String?
+  bicepCurlsO2       Int?
+  bicepCurlsPR       Int?
+  bicepCurlsInogen   Int?
 
   tricepExtDone      Boolean @default(false)
   tricepExtWeight    String?
   tricepExtReps      String?
+  tricepExtO2        Int?
+  tricepExtPR        Int?
+  tricepExtInogen    Int?
 
   shoulderPressDone   Boolean @default(false)
   shoulderPressWeight String?
   shoulderPressReps   String?
+  shoulderPressO2     Int?
+  shoulderPressPR     Int?
+  shoulderPressInogen Int?
 
   chestPressDone     Boolean @default(false)
   chestPressBand     String?
   chestPressReps     String?
+  chestPressO2       Int?
+  chestPressPR       Int?
+  chestPressInogen   Int?
 
   seatedRowsDone     Boolean @default(false)
   seatedRowsBand     String?
   seatedRowsReps     String?
+  seatedRowsO2       Int?
+  seatedRowsPR       Int?
+  seatedRowsInogen   Int?
 
   sitToStandsDone    Boolean @default(false)
   sitToStandsReps    String?
+  sitToStandsO2      Int?
+  sitToStandsPR      Int?
+  sitToStandsInogen  Int?
 
   legLiftsDone       Boolean @default(false)
   legLiftsReps       String?
+  legLiftsO2         Int?
+  legLiftsPR         Int?
+  legLiftsInogen     Int?
 
   miniSquatsDone     Boolean @default(false)
   miniSquatsReps     String?
+  miniSquatsO2       Int?
+  miniSquatsPR       Int?
+  miniSquatsInogen   Int?
+
+  // New band exercises
+  bandBicepsDone     Boolean @default(false)
+  bandBicepsWeight   String?
+  bandBicepsReps     String?
+  bandBicepsO2       Int?
+  bandBicepsPR       Int?
+  bandBicepsInogen   Int?
+
+  bandBackDone       Boolean @default(false)
+  bandBackWeight     String?
+  bandBackReps       String?
+  bandBackO2         Int?
+  bandBackPR         Int?
+  bandBackInogen     Int?
+
+  bandGlutesDone     Boolean @default(false)
+  bandGlutesWeight   String?
+  bandGlutesReps     String?
+  bandGlutesO2       Int?
+  bandGlutesPR       Int?
+  bandGlutesInogen   Int?
+
+  bandLegsDone       Boolean @default(false)
+  bandLegsWeight     String?
+  bandLegsReps       String?
+  bandLegsO2         Int?
+  bandLegsPR         Int?
+  bandLegsInogen     Int?
+
+  bandShouldersDone  Boolean @default(false)
+  bandShouldersWeight String?
+  bandShouldersReps  String?
+  bandShouldersO2    Int?
+  bandShouldersPR    Int?
+  bandShouldersInogen Int?
 
   // Aerobic - Rowing
   rowingDuration Int?
