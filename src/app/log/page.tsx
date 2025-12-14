@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, Suspense, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { format, parseISO } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import Link from 'next/link'
 
 interface LogData {
@@ -362,7 +363,7 @@ function CollapsibleSection({
 function LogPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const dateParam = searchParams.get('date') || format(new Date(), 'yyyy-MM-dd')
+  const dateParam = searchParams.get('date') || formatInTimeZone(new Date(), 'America/Los_Angeles', 'yyyy-MM-dd')
   const [log, setLog] = useState<LogData>({ ...defaultLog, date: dateParam })
   const [saving, setSaving] = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')

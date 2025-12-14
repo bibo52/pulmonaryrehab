@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 
 export default function QuickLogButton() {
   const router = useRouter()
@@ -28,7 +29,7 @@ export default function QuickLogButton() {
       }
 
       const previousLog = recentLogs[0]
-      const today = format(new Date(), 'yyyy-MM-dd')
+      const today = formatInTimeZone(new Date(), 'America/Los_Angeles', 'yyyy-MM-dd')
 
       // Only copy pre-exercise vitals to today's log
       const res = await fetch('/api/logs', {

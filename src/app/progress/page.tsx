@@ -15,6 +15,7 @@ import {
   startOfWeek,
   endOfWeek,
 } from 'date-fns'
+import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
 import {
   LineChart,
   Line,
@@ -53,7 +54,7 @@ function calculateStreak(logs: LogData[]): number {
   )
 
   let streak = 0
-  const today = new Date()
+  const today = toZonedTime(new Date(), 'America/Los_Angeles')
   today.setHours(0, 0, 0, 0)
 
   for (let i = 0; i < sortedLogs.length; i++) {
@@ -89,9 +90,10 @@ export default function ProgressPage() {
   useEffect(() => {
     async function fetchLogs() {
       try {
-        const threeMonthsAgo = subMonths(new Date(), 3)
+        const now = toZonedTime(new Date(), 'America/Los_Angeles')
+        const threeMonthsAgo = subMonths(now, 3)
         const res = await fetch(
-          `/api/logs?startDate=${format(threeMonthsAgo, 'yyyy-MM-dd')}&endDate=${format(new Date(), 'yyyy-MM-dd')}`
+          `/api/logs?startDate=${format(threeMonthsAgo, 'yyyy-MM-dd')}&endDate=${format(now, 'yyyy-MM-dd')}`
         )
         if (res.ok) {
           const data = await res.json()

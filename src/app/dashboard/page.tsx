@@ -2,13 +2,14 @@ import { redirect } from 'next/navigation'
 import { isAuthenticated } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, isToday, isSameDay } from 'date-fns'
+import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
 import Link from 'next/link'
 import type { DailyLog } from '@/generated/prisma/client'
 import QuickLogButton from './QuickLogButton'
 import DiscardButton from './DiscardButton'
 
 async function getWeekLogs(): Promise<DailyLog[]> {
-  const today = new Date()
+  const today = toZonedTime(new Date(), 'America/Los_Angeles')
   const weekStart = startOfWeek(today, { weekStartsOn: 0 })
   const weekEnd = endOfWeek(today, { weekStartsOn: 0 })
 
@@ -39,7 +40,7 @@ export default async function DashboardPage() {
   }
 
   const logs = await getWeekLogs()
-  const today = new Date()
+  const today = toZonedTime(new Date(), 'America/Los_Angeles')
   const weekStart = startOfWeek(today, { weekStartsOn: 0 })
   const weekEnd = endOfWeek(today, { weekStartsOn: 0 })
   const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd })
